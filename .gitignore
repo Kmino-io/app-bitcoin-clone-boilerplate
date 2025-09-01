@@ -7,3 +7,6 @@ obj
 .vscode
 build
 tests/snapshots-tmp
+
+# Project documentation
+Project_guide.md
