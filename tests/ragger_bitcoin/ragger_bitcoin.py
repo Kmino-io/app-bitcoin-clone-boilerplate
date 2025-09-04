@@ -20,7 +20,8 @@ TESTS_ROOT_DIR = Path(__file__).parent
 class RaggerClient(LegacyClient):
     def __init__(self, comm_client: TransportClient, screenshot_dir: Path = TESTS_ROOT_DIR) -> None:
         self.app = btchip(RaggerAdaptor(comm_client, screenshot_dir))
-        self.chain = Chain.TEST
+        self.chain = Chain.MAIN
+        # self.chain=Chain.TEST
 
     def get_extended_pubkey(
             self, path: str, display: bool = False, navigator: Optional[Navigator] = None,

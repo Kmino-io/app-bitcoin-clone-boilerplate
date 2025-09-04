@@ -52,18 +52,25 @@ endif
 ifeq ($(COIN),syscoin_test)
 
 # Syscoin testnet configuration
+BIP44_COIN_TYPE=1
+BIP44_COIN_TYPE_2=1
+COIN_P2PKH_VERSION=111
+COIN_P2SH_VERSION=196
+COIN_NATIVE_SEGWIT_PREFIX=\"tb\"
+COIN_COINID_SHORT=\"TEST\"
+COIN_COINID=\"Syscoin\"
+
+# Add to compiler defines
 DEFINES   += BIP32_PUBKEY_VERSION=0x043587CF
-DEFINES   += BIP44_COIN_TYPE=1
-DEFINES   += COIN_P2PKH_VERSION=111
-DEFINES   += COIN_P2SH_VERSION=196
-DEFINES   += COIN_NATIVE_SEGWIT_PREFIX=\"tb\"
-DEFINES   += COIN_COINID_SHORT=\"TEST\"
+DEFINES   += BIP44_COIN_TYPE=$(BIP44_COIN_TYPE)
+DEFINES   += BIP44_COIN_TYPE_2=$(BIP44_COIN_TYPE_2)
+DEFINES   += COIN_P2PKH_VERSION=$(COIN_P2PKH_VERSION)
+DEFINES   += COIN_P2SH_VERSION=$(COIN_P2SH_VERSION)
+DEFINES   += COIN_NATIVE_SEGWIT_PREFIX=$(COIN_NATIVE_SEGWIT_PREFIX)
+DEFINES   += COIN_COINID_SHORT=$(COIN_COINID_SHORT)
 
 # Name of the coin that will be used in the app display
 COIN_COINID_NAME="Syscoin Test"
-
-# Sign message magic header  
-COIN_COINID=\"Syscoin\"
 
 # Testnet derivation paths (more comprehensive for testing)
 APP_LOAD_PARAMS += --path "0'/1'" --path "44'/1'" --path "45'/1'" --path "84'/1'" --path "86'/1'" --path "48'/1'" --path "49'/1'"
@@ -71,19 +78,25 @@ APP_LOAD_PARAMS += --path "0'/1'" --path "44'/1'" --path "45'/1'" --path "84'/1'
 else ifeq ($(COIN),syscoin)
 
 # Syscoin mainnet configuration (production)
-DEFINES   += BIP32_PUBKEY_VERSION=0x0488B21E  
-DEFINES   += BIP44_COIN_TYPE=57
-DEFINES   += BIP44_COIN_TYPE_2=57
-DEFINES   += COIN_P2PKH_VERSION=63
-DEFINES   += COIN_P2SH_VERSION=5
-DEFINES   += COIN_NATIVE_SEGWIT_PREFIX=\"sys\"
-DEFINES   += COIN_COINID_SHORT=\"SYS\"
+BIP44_COIN_TYPE=57
+BIP44_COIN_TYPE_2=57
+COIN_P2PKH_VERSION=63
+COIN_P2SH_VERSION=5
+COIN_NATIVE_SEGWIT_PREFIX=\"sys\"
+COIN_COINID_SHORT=\"SYS\"
+COIN_COINID=\"Syscoin\"
+
+# Add to compiler defines
+DEFINES   += BIP32_PUBKEY_VERSION=0x0488B21E 
+DEFINES   += BIP44_COIN_TYPE=$(BIP44_COIN_TYPE)
+DEFINES   += BIP44_COIN_TYPE_2=$(BIP44_COIN_TYPE_2)
+DEFINES   += COIN_P2PKH_VERSION=$(COIN_P2PKH_VERSION)
+DEFINES   += COIN_P2SH_VERSION=$(COIN_P2SH_VERSION)
+DEFINES   += COIN_NATIVE_SEGWIT_PREFIX=$(COIN_NATIVE_SEGWIT_PREFIX)
+DEFINES   += COIN_COINID_SHORT=$(COIN_COINID_SHORT)
 
 # Name of the coin that will be used in the app display
 COIN_COINID_NAME="Syscoin"
-
-# Sign message magic header
-COIN_COINID=\"Syscoin\"
 
 # Mainnet derivation paths (standard Bitcoin-compatible)
 APP_LOAD_PARAMS += --path "44'/57'" --path "45'/57'" --path "84'/57'" --path "86'/57'"

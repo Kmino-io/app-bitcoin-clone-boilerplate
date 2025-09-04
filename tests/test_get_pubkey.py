@@ -36,10 +36,15 @@ def pubkey_instruction_warning_approve(model: Firmware) -> Instructions:
 
 def test_get_public_key(navigator: Navigator, firmware: Firmware,
                         client: RaggerClient, test_name: str):
-    testcases = {
-        "m/84'/1'/2'/0/10":
-        "tpubDG9YpSUwScWJBBSrhnAT47NcT4NZGLcY18cpkaiWHnkUCi19EtCh8Heeox268NaFF6o56nVeSXuTyK6jpzTvV1h68Kr3edA8AZp27MiLUNt"}
-    for path, pubkey in testcases.items():
+    # Regular BIP paths (44, 49, 84) - no warning needed
+    regular_testcases = {
+        "m/84'/57'/0'/0/0": "xpub6FmWA2PWkNDPmEfKBQzKaL9mqu4TfV3VLsm2GiCtqwN8uB73WWBdw7RYGusrtg6vZ8a8RrNAoP9xR4oRSUM5RZcVLjXvhJcUiaLsp9vXwLR",
+        "m/44'/57'/0'/0/0": "xpub6FR3N26LdwUQCLb8jdr6oFbJJ4coHRMNvLGY4nyr455XBpDkGU1GuCz8GVsHohRTqTx3Pyij9sgX4jEZmbSAFMonvVQ55dkhLd2NyzpLJEi",
+        "m/49'/57'/0'/0/0": "xpub6GTihEYUBWz5PX8SsHXY7AViGtpozWo1aaTXtkCkU7mQXWV81GTRqXTuyXFesmxoHwH2tL7zfbwA2jbq5e5KF5Rmx4ncLXJTHUgd5hx6agg",
+    }
+    
+    # Test regular paths
+    for path, pubkey in regular_testcases.items():
         assert pubkey == client.get_extended_pubkey(
             path=path,
             display=True,
@@ -47,20 +52,24 @@ def test_get_public_key(navigator: Navigator, firmware: Firmware,
             instructions=pubkey_instruction_approve(firmware),
             testname=f"{test_name}_{path}"
         )
-    testcases = {
-        "m/44'/1'/0'": "tpubDCwYjpDhUdPGP5rS3wgNg13mTrrjBuG8V9VpWbyptX6TRPbNoZVXsoVUSkCjmQ8jJycjuDKBb9eataSymXakTTaGifxR6kmVsfFehH1ZgJT",
-        "m/44'/1'/10'": "tpubDCwYjpDhUdPGp21gSpVay2QPJVh6WNySWMXPhbcu1DsxH31dF7mY18oibbu5RxCLBc1Szerjscuc3D5HyvfYqfRvc9mesewnFqGmPjney4d",
-        "m/44'/1'/2'/1/42": "tpubDGF9YgHKv6qh777rcqVhpmDrbNzgophJM9ec7nHiSfrbss7fVBXoqhmZfohmJSvhNakDHAspPHjVVNL657tLbmTXvSeGev2vj5kzjMaeupT",
-        "m/48'/1'/4'/1'/0/7": "tpubDK8WPFx4WJo1R9mEL7Wq325wBiXvkAe8ipgb9Q1QBDTDUD2YeCfutWtzY88NPokZqJyRPKHLGwTNLT7jBG59aC6VH8q47LDGQitPB6tX2d7",
-        "m/49'/1'/1'/1/3": "tpubDGnetmJDCL18TyaaoyRAYbkSE9wbHktSdTS4mfsR6inC8c2r6TjdBt3wkqEQhHYPtXpa46xpxDaCXU2PRNUGVvDzAHPG6hHRavYbwAGfnFr",
-        "m/86'/1'/4'/1/12": "tpubDHTZ815MvTaRmo6Qg1rnU6TEU4ZkWyA56jA1UgpmMcBGomnSsyo34EZLoctzZY9MTJ6j7bhccceUeXZZLxZj5vgkVMYfcZ7DNPsyRdFpS3f",
+    
+    # Unusual/Warning BIP paths for Syscoin - require user confirmation
+    warning_testcases = {
+        "m/86'/57'/0'/0/0": "xpub6GMM1KKAPuS364DhU9v6puzQ4R2WRagG2WH45ojFC6LVZM1M4pgHEfMcWycyq9YQMStm7kJyZgM9k4ZrphbiMK5BXheTx59ukUWgEvA77KW",
+        "m/44'/57'/0'": "xpub6DDDtq9CSMYEHemBTmQB5DpwQyCkAg7m8EN8mPgzM4ReJG9v25QxXkaJbRPdipjWRaHR2FpCuXmS6yYpZ2VYR3MhdC8YEh3MezYoHbNzUJh",
+        "m/44'/57'/2'/1/42": "xpub6FsDJvL1h133xkt4fThSKYPqbNtGDjKNWEhirHrWTqmJy16H3A83LqL2MiLMBxGb4nXLukTyjR7R1SgNTuMWJSHViDXrsrs5LcKPF9gFt3N", 
+        "m/48'/57'/0'/1'/0/7": "xpub6HUmhgfb9jdsS4yaNhBjCwsD1DW2NHRm34wZHVcDEs5UD93TvTPKPtD1kSDWvL5ZFqc6bsYjaEwz7wLBW52HXURzRY8314BwnAjZifh9fb5",
+        "m/49'/57'/1'/1/3": "xpub6HER3yZ1LFxi2U7RqdrtzNYhYxoijACAqtLPt3xbZp9qip96eUnSYS4JCT9HtS23tXJ7MWBDdTZhYjJKsz4jvBC4AhneVKkFdk2nnVs3vEZ",
+        "m/84'/57'/0'/1/50": "xpub6Fgh8wcjZDYsuGEzMbmcQN8q7SftLMsczxgefvCSAW2f7yPdauJ5Vm6JiaWZ6DCc37tNyqLuNCrhUMCoCXbosN83HRTucgWmxAfyEf44dAk",
     }
 
-    for path, pubkey in testcases.items():
+    # Test warning paths
+    for path, pubkey in warning_testcases.items():
+
         assert pubkey == client.get_extended_pubkey(
             path=path,
             display=True,
             navigator=navigator,
             instructions=pubkey_instruction_warning_approve(firmware),
             testname=f"{test_name}_{path}"
-        )
+            )
